@@ -14,7 +14,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-func Init() {
+func Init() (err error) {
 	// 设置默认值
 	viper.SetDefault("fileDir", "./")
 	// 读取配置文件
@@ -23,7 +23,7 @@ func Init() {
 	viper.SetConfigType("yaml")          // SetConfigType设置远端源返回的配置类型，例如:“json”。
 	viper.AddConfigPath(".")             // 还可以在工作目录中查找配置
 	// 读取配置文件
-	err := viper.ReadInConfig()
+	err = viper.ReadInConfig()
 	if err != nil {
 		fmt.Println("读取配置文件失败:", err)
 		return
