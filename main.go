@@ -8,7 +8,6 @@ import (
 	"GoWebX/settings"
 	"context"
 	"fmt"
-	"github.com/spf13/viper"
 	"go.uber.org/zap"
 	"log"
 	"net/http"
@@ -36,20 +35,20 @@ func main() {
 	}
 
 	// 2. 初始化日志
-	if err := logger.Init(); err != nil {
+	if err := logger.Init(settings.Conf.LogConfig); err != nil {
 		fmt.Printf("init logger failed, error: %v\n", err)
 		return
 	}
 	defer zap.L().Sync()
 	zap.L().Debug("logger initialized successfully")
 	// 3. 初始化 MySQL 连接
-	if err := mysql.Init(); err != nil {
+	if err := mysql.Init(settings.Conf.MySQLConfig); err != nil {
 		fmt.Printf("init mysql failed, error: %v\n", err)
 		return
 	}
 	defer mysql.Close()
 	// 4. 初始化 Redis 连接
-	if err := redis.Init(); err != nil {
+	if err := redis.Init(settings.Conf.RedisConfig); err != nil {
 		fmt.Printf("init redis failed, error: %v\n", err)
 		return
 	}
@@ -62,7 +61,7 @@ func main() {
 		// Addr可选地以“host:port”的形式指定服务器要监听的TCP地址。如果为空，则使用“:http”(端口80)。
 		// 服务名称在RFC 6335中定义，并由IANA分配
 		//Addr: "0.0.0.0:8080",
-		Addr:    fmt.Sprintf("0.0.0.0:%d", viper.GetInt("app.port")),
+		Addr:    fmt.Sprintf(":%d", settings.Conf.Port),
 		Handler: router,
 	}
 	go func() {

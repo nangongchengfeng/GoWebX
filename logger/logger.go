@@ -1,7 +1,7 @@
 package logger
 
 import (
-	"github.com/spf13/viper"
+	"GoWebX/settings"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
@@ -23,17 +23,16 @@ import (
  * @Email: 1794748404@qq.com
  * @Date: 2025-02-28 17:36
  */
-
-func Init() (err error) {
+func Init(cfg *settings.LogConfig) (err error) {
 	writeSyncer := getLogWriter(
-		viper.GetString("log.filename"),
-		viper.GetInt("log.max_size"),
-		viper.GetInt("log.max_backups"),
-		viper.GetInt("log.max_age"),
+		cfg.Filename,
+		cfg.MaxSize,
+		cfg.MaxBackups,
+		cfg.MaxAge,
 	)
 	encoder := getEncoder()
 	var l = new(zapcore.Level)
-	err = l.UnmarshalText([]byte(viper.GetString("log.level")))
+	err = l.UnmarshalText([]byte(cfg.Level))
 	if err != nil {
 		return
 	}
@@ -173,5 +172,4 @@ func GinRecovery(stack bool) gin.HandlerFunc {
 		}()
 		c.Next()
 	}
-
 }
